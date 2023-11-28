@@ -1,6 +1,7 @@
-import platform
+
 
 # Check on which OS the code is running. Will just assume that linux will work for Rasperry Pi. Alternatively use os.uname
+import platform
 if platform.system().lower().startswith('win'):
     from sense_emu import SenseHat
 elif platform.system().lower().startswith('dar'):
@@ -8,9 +9,12 @@ elif platform.system().lower().startswith('dar'):
 elif platform.system().lower().startswith('lin'):
     from sense_hat import SenseHat
 else:
-    raise ImportError("my module doesn't support this system")
+    raise ImportError("SenseHat doesn't support this system")
 
-sense = SenseHat()
+from sense_dummy import SenseDummy
+
+# sense = SenseHat()
+sense = SenseDummy()
 
 green = (0, 255, 0)
 white = (255, 255, 255)
