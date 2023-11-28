@@ -3,3 +3,6 @@ Flask
 
 # GPIO Library for Raspberry Pi
 gpiozero
+
+# SenseHat Emulator
+sense-emu

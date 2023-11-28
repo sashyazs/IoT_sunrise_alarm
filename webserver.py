@@ -1,5 +1,5 @@
 from flask import Flask, request
-from sense_emu import SenseHat
+
 from datetime import datetime
 
 app = Flask(__name__)

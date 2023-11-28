@@ -1,6 +1,8 @@
 # IoT_sunrise_alarm
 
-In terminal:
+## Python Library Requirements
+see requirements.txt
 
-sudo apt-get install pigpio
-sudo pigpio
+## Developing on Alternative Platforms
+https://sense-emu.readthedocs.io/en/v1.1/install.html#macos-installation
+https://pygobject.readthedocs.io/en/latest/getting_started.html#getting-started
