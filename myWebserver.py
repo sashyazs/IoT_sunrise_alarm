@@ -3,7 +3,6 @@ from flask import Flask, request
 from datetime import datetime
 
 app = Flask(__name__)
-sense = SenseHat()
 
 @app.route("/")
 def hello():
