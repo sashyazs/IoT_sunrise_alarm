@@ -1,0 +1,1 @@
+# Keep all your functions here, don't clutter up the main app.py file
