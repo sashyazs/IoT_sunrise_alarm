@@ -17,7 +17,4 @@ while True:
 
 pause()
 
-#In bash:
 
-#sudo apt-get install pigpio
-#sudo pigpio
