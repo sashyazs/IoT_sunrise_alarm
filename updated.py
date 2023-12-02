@@ -1,6 +1,10 @@
 from gpiozero import Button, DistanceSensor, LED
-from sense_hat import SenseHat
+
+# from sense_hat import SenseHat
+from sense_dummy import SenseHat
+
 from datetime import datetime, timedelta
+
 import time
 
 # Initialize Sense HAT

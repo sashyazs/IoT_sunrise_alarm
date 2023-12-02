@@ -1,7 +1,7 @@
 # This is just a class to provide dummy feeback for when we can't get the sense hat library to work
 import random
 
-class SenseDummy:
+class SenseHat:
 
     humidity = 1
 
