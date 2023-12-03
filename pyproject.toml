@@ -1,0 +1,11 @@
+[project]
+name = "flaskr"
+version = "0.0.1"
+description = "IoT Alarm."
+readme = "README.md"
+maintainers = [{name = "Sashya", email = "sashya.zahara@gmail.com"}]
+dependencies = [
+    "flask",
+    "gpiozero",
+    "sense-emu",
+]
