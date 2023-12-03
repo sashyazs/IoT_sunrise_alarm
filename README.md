@@ -1,4 +1,4 @@
-# IoT_sunrise_alarm
+# IoT Sunrise Alarm
 
 ## Installing
 Create a virtualenv and activate it:
@@ -23,7 +23,6 @@ $ pip install -e .
 
 ## Run
 ```
-$ flask --app flaskr init-db
 $ flask --app flaskr run --debug
 ```
 Open http://127.0.0.1:5000 in a browser.

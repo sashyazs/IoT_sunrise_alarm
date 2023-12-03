@@ -1,0 +1,28 @@
+{%extends "base.html" %}
+{%block content%}
+
+<!--Add page title value from Flask 'title' value-->
+<h1>{{ title }}</h1>
+
+<div id="alarms">
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Name</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in alarms %}
+            <tr>
+                <th scope="row">{{ a.time }}</th>
+                <td>{{ a.name }}</td>
+                <td>{{ a.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

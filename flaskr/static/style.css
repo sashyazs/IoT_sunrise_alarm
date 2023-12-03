@@ -1,0 +1,86 @@
+/***************************
+****************************
+Sashya Zahara
+
+Version 0.0.1
+Last Edit: 3 December 2023
+
+Cascading Style Sheet for IoT Alarm Clock
+
+Make sure this file is located in the static folder. Flask will handle the path using the url_for shortcut
+****************************
+***************************/
+
+/*----------------------- Body Styles --------------------------*/
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0 0 100px;
+    padding: 0;
+    min-height: 100%;
+    width: 100%;
+    font-size: 100%;
+    font-family: Verdana, Arial, Tahoma, sans-serif;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: darkorchid;
+    color: white;
+    text-align: center;
+}
+
+/*----------------------- Header Styles --------------------------*/
+h1 {
+    font-size: 2.5em;
+    text-align: center;
+}
+
+/*----------------------- Text Styles --------------------------*/
+
+
+/*----------------------- Table Styles --------------------------*/
+/* zebra striping */
+
+table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ff33cc;
+}
+
+th,
+td {
+    padding: 20px;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ff33cc;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #e495e4;
+}
+
+
+/*----------------------- Positioning Styles --------------------------*/
+
+/* Top Right Corner */
+div.topRight {
+    position: absolute;
+    top: 0%;
+    right: 0%;
+}
+
+/*----------------------- Formatting Styles --------------------------*/
+

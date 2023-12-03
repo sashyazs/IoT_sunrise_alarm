@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="HTML, CSS, JavaScript">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Add page title value from Flask 'title' value-->
+    <title>{{ title }}</title>
+    <!--Load CSS in Flask with html-->
+    <link rel="stylesheet"  type="text/css" href="{{url_for('static', filename='style.css')}}">
+
+</head>
+
+
+<body>
+    <!--create a template for all other pages-->
+    {% block content %}
+    {% endblock %}
+
+    <footer>
+        <p>Sashya Zahara. Copyright 2023. All Rights Reserved</p>
+    </footer>
+
+</body>
+
+</html>
