@@ -17,9 +17,9 @@
         <tbody>
             {% for a in alarms %}
             <tr>
-                <th scope="row">{{ a.time }}</th>
-                <td>{{ a.name }}</td>
-                <td>{{ a.active }}</td>
+                <td><input type="datetime-local" value="{{ a.time }}"></td>
+                <td><input type="text" value="{{ a.name }}"></td>
+                <td><input type="checkbox" {% if a.enabled==1 %}checked{% endif %}></td>
                 <td><input type="color" value="{{ a.color }}" /></td>
             </tr>
             {% endfor %}
