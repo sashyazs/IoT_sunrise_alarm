@@ -19,7 +19,7 @@ class Color:
     a: int  # Opacity 0 - 100 percent, but we will use it as a brighness value in our program
 
     def __str__(self) -> str:
-        return f'#{hex(self.r)}{hex(self.g)}{hex(self.b)}'
+        return f'#{self.r:2x}{self.g:2x}{self.b:2x}'
 
 # This will handle all the alarm details such as name, time and anything else to be added.
 class Alarm:

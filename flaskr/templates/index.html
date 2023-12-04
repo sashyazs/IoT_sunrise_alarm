@@ -20,7 +20,7 @@
                 <th scope="row">{{ a.time }}</th>
                 <td>{{ a.name }}</td>
                 <td>{{ a.active }}</td>
-                <td bgcolor="{{ a.color }}">&nbsp;</td>
+                <td><input type="color" value="{{ a.color }}" /></td>
             </tr>
             {% endfor %}
         </tbody>
