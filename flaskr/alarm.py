@@ -34,20 +34,33 @@ class Alarm:
     ringing: bool        # Is the alarm currently ringing
 
     def __init__(self, **kwargs):
+        ini_time_for_now = datetime.now()
         self.name = kwargs.get('name')
-        self.time = datetime.strptime(kwargs.get('time'), '%Y-%m-%d %H:%M:%S')
-        self.enabled = kwargs.get('enabled') 
+        self.time = datetime.fromisoformat(kwargs.get('time'))
+        # self.time = datetime.strptime(kwargs.get('time'), '%Y-%m-%d %H:%M:%S')
+        if kwargs.get('enabled'):
+            self.enabled = kwargs.get('enabled')
+        else:
+            self.enabled = False
         if kwargs.get('color'):
             self.color = kwargs.get('color')    
         else:
             self.color = Color(247,205,93,1) # This color should represent sunrise
+        # Reset the alarm times days to the current or next day
+        self.time = self.time.replace(year=ini_time_for_now.year, month=ini_time_for_now.month, day=ini_time_for_now.day)
     
     # Create a pretty string representation of the current alarms
     def __str__(self) -> str:
-        return f'Alarm {self.name} set for {self.time.strftime('%H:%M')} and is currently {"on" if self.active else "off"}'
+        return f'Alarm {self.name} set for {self.time.strftime('%H:%M')} and is currently {"on" if self.enabled else "off"}'
 
     def __repr__(self):
-        return f'Alarm(\'{self.name}\',\'{self.time}\',{self.active})'
+        return f'Alarm(\'{self.name}\',\'{self.time}\',{self.enabled})'
+    
+    # Get the time till the next alarm
+    def next_alarm(self):
+        # Using current time
+        ini_time_for_now = datetime.now()
+        return (self.time - ini_time_for_now)
 
 # Create and render the homepage
 @bp.route("/")
@@ -81,9 +94,9 @@ def alarms_load(file = 'alarms.json'):
         except FileNotFoundError:
             # Could not load the alarms file, so populate the array with a default
             alarm_list = {
-                Alarm(name="Default Alarm", time='2024-12-31 23:59:00', enabled=True),
-                Alarm(name="Get Coffee", time='2024-12-31 08:00:00', color=Color(255,255,255,1)),
-                Alarm(name="More Coffee", time='2024-12-31 08:00:00', color=Color(111,78,55,1)),
+                Alarm(name="Default Alarm", time='1900-01-01 23:00:00', enabled=True),
+                Alarm(name="Get Coffee", time='1900-01-01 08:15:00', color=Color(255,255,255,1)),
+                Alarm(name="More Coffee", time='1900-01-01 08:30:00', color=Color(111,78,55,1)),
             }
         else:
             # If the file was able to be read, load the alarms.
@@ -96,4 +109,5 @@ def alarms_load(file = 'alarms.json'):
 if __name__ == "__main__":
     alarms = alarms_load()
     for a in alarms:
-        print(repr(a))
+        # print(str(a))
+        print(a.next_alarm())
