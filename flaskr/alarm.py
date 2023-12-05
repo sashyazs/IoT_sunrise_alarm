@@ -72,9 +72,6 @@ def alarms_load(file = 'alarms.json'):
     alarm_file = Path(file)
     alarm_list = []
     
-    def sortSecond(val):
-        return val[1] 
-
     # First check if we are dealing with a file
     if alarm_file.is_file:
         # Try to open the file
