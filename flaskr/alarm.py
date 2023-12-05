@@ -29,14 +29,18 @@ class Alarm:
 
     name: str           # Sting name of the alarm
     time: datetime      # Datatime formatted string of the alarm time
-    enabled: bool        # Is the alarm currently active or not
+    enabled: bool        # Is the alarm currently enabled or not
     color: Color        # The color of the light when it is fully on
+    ringing: bool        # Is the alarm currently ringing
 
-    def __init__(self, name, time, enabled = True):
-        self.name = name
-        self.time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
-        self.active = enabled
-        self.color = Color(247,205,93,1)    # This color should represent sunrise
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.time = datetime.strptime(kwargs.get('time'), '%Y-%m-%d %H:%M:%S')
+        self.enabled = kwargs.get('enabled') 
+        if kwargs.get('color'):
+            self.color = kwargs.get('color')    
+        else:
+            self.color = Color(247,205,93,1) # This color should represent sunrise
     
     # Create a pretty string representation of the current alarms
     def __str__(self) -> str:
@@ -68,6 +72,9 @@ def alarms_load(file = 'alarms.json'):
     alarm_file = Path(file)
     alarm_list = []
     
+    def sortSecond(val):
+        return val[1] 
+
     # First check if we are dealing with a file
     if alarm_file.is_file:
         # Try to open the file
@@ -77,14 +84,16 @@ def alarms_load(file = 'alarms.json'):
         except FileNotFoundError:
             # Could not load the alarms file, so populate the array with a default
             alarm_list = {
-                Alarm("Default Alarm", '2024-12-31 23:59:00', False),
+                Alarm(name="Default Alarm", time='2024-12-31 23:59:00', enabled=True),
+                Alarm(name="Get Coffee", time='2024-12-31 08:00:00', color=Color(255,255,255,1)),
+                Alarm(name="More Coffee", time='2024-12-31 08:00:00', color=Color(111,78,55,1)),
             }
         else:
             # If the file was able to be read, load the alarms.
             for item in json_array:
                 alarm_list.append(Alarm(item['name'],item['time']))
 
-    return alarm_list
+        return alarm_list
         
 # This is for testing and working on this module in isolation
 if __name__ == "__main__":

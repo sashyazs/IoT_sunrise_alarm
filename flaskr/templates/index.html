@@ -8,8 +8,7 @@
     <table>
         <thead>
             <tr>
-                <th scope="col">Time</th>
-                <th scope="col">Name</th>
+                <th scope="col">Alarms</th>
                 <th scope="col">Status</th>
                 <th scope="col">Color</th>
             </tr>
@@ -17,10 +16,19 @@
         <tbody>
             {% for a in alarms %}
             <tr>
-                <td><input type="datetime-local" value="{{ a.time }}"></td>
-                <td><input type="text" value="{{ a.name }}"></td>
-                <td><input type="checkbox" {% if a.enabled==1 %}checked{% endif %}></td>
-                <td><input type="color" value="{{ a.color }}" /></td>
+                <td>
+                    <p class="name">{{ a.name }}</p>
+                    <p class="time">{{ a.time }}</p>
+                    <p class="time_relative">Use timedelta to calculate this time</p>
+                </td>
+                <td>
+                    <!-- Rounded switch -->
+                    <label class="switch">
+                        <input type="checkbox" {% if a.enabled==1 %}checked{% endif %}>
+                        <span class="slider round"></span>
+                    </label>
+                <td bgcolor="{{ a.color }}">&nbsp;</td>
+
             </tr>
             {% endfor %}
         </tbody>
