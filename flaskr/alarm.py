@@ -19,10 +19,32 @@ class Color:
     r: int  # Red 0 - 255
     g: int  # Green 0 - 255
     b: int  # Blue 0 - 255
-    a: int  # Opacity 0.0 - 1.0, but we will use it as a brighness value in our program
+    a: float  # Opacity 0.0 - 1.0, but we will use it as a brighness value in our program
+
+    def __init__(self, r: int, g:int, b: int, a: int = 1):
+        self.r = r
+        self.g = g
+        self.b = b
+        self.a = a
 
     def __str__(self) -> str:
         return f'#{self.r:2x}{self.g:2x}{self.b:2x}'
+
+    def __next__(self):
+        r = self.r
+        g = self.g
+        b = self.b
+        while self.__a < self.a:
+            r_dimmed: int = r * self.__a
+            g_dimmed: int = g * self.__a
+            b_dimmed: int = b * self.__a
+            self.__a += 1
+            return f'#{int(r_dimmed):02x}{int(g_dimmed):02x}{int(b_dimmed):02x}'
+        raise StopIteration
+            
+    def __iter__(self):
+        self.__a = + 1
+        return self
 
 # This will handle all the alarm details such as name, time and anything else to be added.
 class Alarm:
@@ -49,7 +71,7 @@ class Alarm:
         if kwargs.get('color'):
             self.color = kwargs.get('color')    
         else:
-            self.color = Color(247,205,93,1) # This color should represent sunrise
+            self.color = Color(247,205,93) # This color should represent sunrise
 
         # Reset the alarm times days to the current or next day
         if kwargs.get('repeat'):
@@ -136,8 +158,8 @@ def alarms_load(file = 'alarms.json'):
             # Could not load the alarms file, so populate the array with a default
             alarm_list = {
                 Alarm(name="Default Alarm", time='1900-01-01 08:00:00', enabled=True, repeat=True),
-                Alarm(name="Get Coffee", time='1900-01-01 08:15:00', color=Color(255,255,255,1)),
-                Alarm(name="More Coffee", time='1900-01-01 08:30:00', color=Color(111,78,55,1)),
+                Alarm(name="Get Coffee", time='1900-01-01 08:15:00', color=Color(255,255,255)),
+                Alarm(name="More Coffee", time='1900-01-01 08:30:00', color=Color(111,78,55)),
             }
         else:
             # If the file was able to be read, load the alarms.
@@ -151,4 +173,11 @@ if __name__ == "__main__":
     alarms = alarms_load()
     for a in alarms:
         # print(str(a))
-        print(a.next_alarm())
+        print(a.time_till_next_alarm())
+    
+    for a in alarms:
+        c = a.color
+        print(f"Printing colors for {a} with maximum of {a.color}")
+
+        for i in a.color:
+            print(a.color)
