@@ -63,26 +63,42 @@ class Alarm:
     def __repr__(self)->str:
         return f'Alarm(\'{self.name}\',\'{self.time}\',{self.enabled})'
 
-    # def __eq__(self, other):
-    #    return ((self.time, self.name.lower()) == (other.time, other.name.lower()))
+    def __hash__(self):
+        return hash((self.name, self.time))
+    
+    def __eq__(self, other):
+        if not isinstance(other, Alarm):
+            # Don't recognise "other", so let *it* decide if we're equal
+            return NotImplemented
+        return ((self.time, self.name.lower()) == (other.time, other.name.lower()))
 
     def __ne__(self, other)->bool:
+        if not isinstance(other, Alarm):
+            return NotImplemented
         return ((self.time, self.name.lower()) != (other.time, other.name.lower()))
 
     def __lt__(self, other)->bool:
+        if not isinstance(other, Alarm):
+            return NotImplemented
         return ((self.time, self.name.lower()) < (other.time, other.name.lower()))
 
     def __le__(self, other)->bool:
+        if not isinstance(other, Alarm):
+            return NotImplemented
         return ((self.time, self.name.lower()) <= (other.time, other.name.lower()))
 
     def __gt__(self, other)->bool:
+        if not isinstance(other, Alarm):
+            return NotImplemented
         return ((self.time, self.name.lower()) > (other.time, other.name.lower()))
 
     def __ge__(self, other)->bool:
+        if not isinstance(other, Alarm):
+            return NotImplemented
         return ((self.time, self.name.lower()) >= (other.time, other.name.lower()))
 
     # Get the time till the next alarm
-    def next_alarm(self):
+    def time_till_next_alarm(self):
         # Using current time
         ini_time_for_now = datetime.now()
         return (self.time - ini_time_for_now)
