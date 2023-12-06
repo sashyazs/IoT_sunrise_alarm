@@ -30,32 +30,57 @@ class Alarm:
     name: str           # Sting name of the alarm
     time: datetime      # Datatime formatted string of the alarm time
     enabled: bool        # Is the alarm currently enabled or not
+    repeat: bool        # Does this alarm repeat. For now, it is only used to reset the day to the current day
     color: Color        # The color of the light when it is fully on
     ringing: bool        # Is the alarm currently ringing
 
     def __init__(self, **kwargs):
         ini_time_for_now = datetime.now()
         self.name = kwargs.get('name')
-        self.time = datetime.fromisoformat(kwargs.get('time'))
+        
+        self.time = datetime.fromisoformat(str(kwargs.get('time')))
         # self.time = datetime.strptime(kwargs.get('time'), '%Y-%m-%d %H:%M:%S')
+        
         if kwargs.get('enabled'):
             self.enabled = kwargs.get('enabled')
         else:
             self.enabled = False
+
         if kwargs.get('color'):
             self.color = kwargs.get('color')    
         else:
             self.color = Color(247,205,93,1) # This color should represent sunrise
+
         # Reset the alarm times days to the current or next day
-        self.time = self.time.replace(year=ini_time_for_now.year, month=ini_time_for_now.month, day=ini_time_for_now.day)
+        if kwargs.get('repeat'):
+            self.repeat = kwargs.get('repeat')
+            self.time = self.time.replace(year=ini_time_for_now.year, month=ini_time_for_now.month, day=ini_time_for_now.day)
     
     # Create a pretty string representation of the current alarms
     def __str__(self) -> str:
         return f'Alarm {self.name} set for {self.time.strftime('%H:%M')} and is currently {"on" if self.enabled else "off"}'
 
-    def __repr__(self):
+    def __repr__(self)->str:
         return f'Alarm(\'{self.name}\',\'{self.time}\',{self.enabled})'
-    
+
+    # def __eq__(self, other):
+    #    return ((self.time, self.name.lower()) == (other.time, other.name.lower()))
+
+    def __ne__(self, other)->bool:
+        return ((self.time, self.name.lower()) != (other.time, other.name.lower()))
+
+    def __lt__(self, other)->bool:
+        return ((self.time, self.name.lower()) < (other.time, other.name.lower()))
+
+    def __le__(self, other)->bool:
+        return ((self.time, self.name.lower()) <= (other.time, other.name.lower()))
+
+    def __gt__(self, other)->bool:
+        return ((self.time, self.name.lower()) > (other.time, other.name.lower()))
+
+    def __ge__(self, other)->bool:
+        return ((self.time, self.name.lower()) >= (other.time, other.name.lower()))
+
     # Get the time till the next alarm
     def next_alarm(self):
         # Using current time
@@ -94,7 +119,7 @@ def alarms_load(file = 'alarms.json'):
         except FileNotFoundError:
             # Could not load the alarms file, so populate the array with a default
             alarm_list = {
-                Alarm(name="Default Alarm", time='1900-01-01 23:00:00', enabled=True),
+                Alarm(name="Default Alarm", time='1900-01-01 23:00:00', enabled=True, repeat=True),
                 Alarm(name="Get Coffee", time='1900-01-01 08:15:00', color=Color(255,255,255,1)),
                 Alarm(name="More Coffee", time='1900-01-01 08:30:00', color=Color(111,78,55,1)),
             }
@@ -103,7 +128,8 @@ def alarms_load(file = 'alarms.json'):
             for item in json_array:
                 alarm_list.append(Alarm(item['name'],item['time']))
 
-        return alarm_list
+        sortedals = sorted(alarm_list)
+        return sortedals
         
 # This is for testing and working on this module in isolation
 if __name__ == "__main__":
