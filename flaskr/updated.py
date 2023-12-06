@@ -2,12 +2,13 @@ from gpiozero import Button, DistanceSensor
 from sense_hat import SenseHat
 from datetime import datetime, timedelta
 import time
+from gpiozero.pins.pigpio import PiGPIOFactory
 
 # Initialize Sense HAT
 sense = SenseHat()
 
 # Initialize Ultrasonic Distance Sensor 
-ultrasonic_sensor = DistanceSensor(echo=17, trigger=4, max_distance=2, threshold_distance=0.05)
+ultrasonic_sensor = DistanceSensor(echo=17, trigger=4, max_distance=2, threshold_distance=0.05, pin_factory=PiGPIOFactory())
 
 
 # Initialize Button 
@@ -56,6 +57,4 @@ def alarm_clock(wake_up_time, sunrise_duration):
 
 # Example: Set alarm for 8:30 AM with a 1-minute sunrise simulation
 alarm_clock("12:54", 1)
-
-
 
