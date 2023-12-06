@@ -26,25 +26,29 @@ class Color:
         self.g = g
         self.b = b
         self.a = a
+        self.__a = 0
 
     def __str__(self) -> str:
         return f'#{self.r:2x}{self.g:2x}{self.b:2x}'
 
+    def __iter__(self):
+        return self
+    
     def __next__(self):
         r = self.r
         g = self.g
         b = self.b
-        while self.__a < self.a:
-            r_dimmed: int = r * self.__a
-            g_dimmed: int = g * self.__a
-            b_dimmed: int = b * self.__a
-            self.__a += 1
-            return f'#{int(r_dimmed):02x}{int(g_dimmed):02x}{int(b_dimmed):02x}'
-        raise StopIteration
-            
-    def __iter__(self):
-        self.__a = + 1
-        return self
+
+        # Had to add this small fraction of 0.01 to make the values end at the final number. Too tired to do it better.
+        if self.__a > self.a + 0.01:
+            raise StopIteration
+        r_dimmed: int = r * self.__a
+        g_dimmed: int = g * self.__a
+        b_dimmed: int = b * self.__a
+        self.__a += 0.5
+        return f'#{int(r_dimmed):02x}{int(g_dimmed):02x}{int(b_dimmed):02x}'
+
+        
 
 # This will handle all the alarm details such as name, time and anything else to be added.
 class Alarm:
@@ -178,6 +182,13 @@ if __name__ == "__main__":
     for a in alarms:
         c = a.color
         print(f"Printing colors for {a} with maximum of {a.color}")
-
-        for i in a.color:
-            print(a.color)
+        val = a.color
+        print(next(val))
+        print(next(val))
+        print(next(val))
+        print(next(val))
+        print(next(val))
+        print(next(val))
+        print(next(val))
+        ## REMEMBER THAT IT WILL THROW StopIteration WHEN DONE!!!
+        print(type(val))
