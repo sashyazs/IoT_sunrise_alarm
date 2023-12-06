@@ -54,7 +54,7 @@ class Alarm:
         # Reset the alarm times days to the current or next day
         if kwargs.get('repeat'):
             self.repeat = kwargs.get('repeat')
-            self.time = self.time.replace(year=ini_time_for_now.year, month=ini_time_for_now.month, day=ini_time_for_now.day)
+            self.time = self.time.replace(year=ini_time_for_now.year, month=ini_time_for_now.month, day=ini_time_for_now.day+1)
     
     # Create a pretty string representation of the current alarms
     def __str__(self) -> str:
@@ -119,7 +119,7 @@ def alarms_load(file = 'alarms.json'):
         except FileNotFoundError:
             # Could not load the alarms file, so populate the array with a default
             alarm_list = {
-                Alarm(name="Default Alarm", time='1900-01-01 23:00:00', enabled=True, repeat=True),
+                Alarm(name="Default Alarm", time='1900-01-01 08:00:00', enabled=True, repeat=True),
                 Alarm(name="Get Coffee", time='1900-01-01 08:15:00', color=Color(255,255,255,1)),
                 Alarm(name="More Coffee", time='1900-01-01 08:30:00', color=Color(111,78,55,1)),
             }
@@ -128,8 +128,7 @@ def alarms_load(file = 'alarms.json'):
             for item in json_array:
                 alarm_list.append(Alarm(item['name'],item['time']))
 
-        sortedals = sorted(alarm_list)
-        return sortedals
+        return sorted(alarm_list)
         
 # This is for testing and working on this module in isolation
 if __name__ == "__main__":
