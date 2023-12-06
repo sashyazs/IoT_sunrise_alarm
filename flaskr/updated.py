@@ -1,20 +1,17 @@
-from gpiozero import Button, DistanceSensor, LED
-
-# from sense_hat import SenseHat
-from sense_dummy import SenseHat
-
+from gpiozero import Button, DistanceSensor
+from sense_hat import SenseHat
 from datetime import datetime, timedelta
-
 import time
 
 # Initialize Sense HAT
 sense = SenseHat()
 
-# Initialize Ultrasonic Distance Sensor (GPIO pin numbers may vary)
-ultrasonic_sensor = DistanceSensor(echo=17, trigger=4, max_distance=1, threshold_distance=0.1)
+# Initialize Ultrasonic Distance Sensor 
+ultrasonic_sensor = DistanceSensor(echo=17, trigger=4, max_distance=2, threshold_distance=0.05)
 
-# Initialize Button (GPIO pin number may vary)
-button = Button(18)
+
+# Initialize Button 
+button = Button(19)
 
 # Function to simulate sunrise gradually
 def simulate_sunrise(start_time, duration_minutes):
@@ -30,6 +27,8 @@ def simulate_sunrise(start_time, duration_minutes):
 # Function to check if the alarm should be turned off
 def check_alarm_off():
     return ultrasonic_sensor.distance < 0.1 or button.is_pressed
+    
+
 
 # Main function for the alarm clock
 def alarm_clock(wake_up_time, sunrise_duration):
@@ -47,13 +46,16 @@ def alarm_clock(wake_up_time, sunrise_duration):
 
         if current_time == wake_up_time:
             print("Alarm! Time to wake up!")
+            sense.clear(255,165,0)
             break
 
         if check_alarm_off():
             print("Alarm turned off.")
-            
             break
+            sleep
 
-# Example: Set alarm for 8:30 AM with a 30-minute sunrise simulation
-alarm_clock("08:30", 30)
+# Example: Set alarm for 8:30 AM with a 1-minute sunrise simulation
+alarm_clock("12:54", 1)
+
+
 
