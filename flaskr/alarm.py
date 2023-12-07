@@ -184,7 +184,7 @@ def alarm():
 
         # Remember to save the values back to the JSON file
         alarms_save(globAlarms)
-    return 'Alarm added. Need to check how to get the return working.' , 200
+        return render_template('create.html', id=len(globAlarms)-1, a=globAlarms[-1])
 
 # Update an alarm
 @bp.route("/alarm/<int:id>", methods=['GET','PUT','DELETE'])

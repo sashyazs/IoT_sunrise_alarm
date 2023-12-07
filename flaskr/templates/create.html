@@ -1,32 +1,24 @@
-<form action='' method = "POST">
-    <div>
-        <label>
-            Alarm Name:
-            <input type = "integer" name="name" id="name"/>
-        </label>
-    </div>
-
-    <div>
-        <label>
-            Alarm Time:
-            <input type="datetime-local" name="time" id="time" />
-        </label>
-    </div>
-
-    <div>
-        <label>
-            Enabled?
-            <input type="checkbox" name="enabled" id="enabled">
-        </label>
-    </div>
-
-    <div>
-        <label>
-            Color:
-            <input type="color" name="color" id="color">
-        </label>
-    </div>
-
-    <br>
-    <input type = "submit" value = "Submit" />
-  </form>
+<tr id="alarm{{ id }}">
+    <td>
+        <p class="name">{{ a.name }}</p>
+        <p class="time">{{ a.time }}</p>
+        <p class="time_relative">{{ a.time_till_next_alarm() }}</p>
+    </td>
+    <td>
+        <p>{% if a.enabled==1 %}Enabled{% endif %}</p>
+        <p>{% if a.ringing==1 %}Ringing!{% endif %}</p>
+    <td>
+        <!-- Workaround to change the backround color of the row now that direct style is not allowed -->
+        <script>
+document.getElementById("alarm{{ id }}").style.backgroundColor = "{{ a.color }}";
+        </script>
+    </td>
+    <td>
+        <button class="btn btn-danger" hx-get="/alarm/{{ id }}">
+            Edit
+        </button>
+        <button class="btn btn-danger" hx-delete="/alarm/{{ id }}">
+            Delete
+        </button>
+    </td>
+</tr>

@@ -46,9 +46,37 @@ document.getElementById("alarm{{ alarms.index(a) }}").style.backgroundColor = "{
     </table>
 </div>
 <div>
-    <form hx-post="/alarm" hx-swap="beforebegin" hx-target="newAlarm">
+    <form hx-post="/alarm" hx-swap="beforebegin" hx-target="#newAlarm">
         <div>
-            <input type="text" name="crate" class="form-control">
+
+            <div>
+                <label>
+                    Alarm Name:
+                    <input type = "integer" name="name" id="name"/>
+                </label>
+            </div>
+        
+            <div>
+                <label>
+                    Alarm Time:
+                    <input type="datetime-local" name="time" id="time" />
+                </label>
+            </div>
+        
+            <div>
+                <label>
+                    Enabled?
+                    <input type="checkbox" name="enabled" id="enabled">
+                </label>
+            </div>
+        
+            <div>
+                <label>
+                    Color:
+                    <input type="color" name="color" id="color">
+                </label>
+            </div>
+
         </div>
         <div>
             <button class="btn">Add Alarm</button>
