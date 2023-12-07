@@ -85,7 +85,8 @@ class Alarm:
         if kwargs.get('color'):
             self.color = Color(webcolors.hex_to_rgb(kwargs.get('color')))
         else:
-            self.color = Color(247,205,93) # This color should represent sunrise
+            # https://webcolors.readthedocs.io/en/latest/contents.html
+            self.color = Color(webcolors.IntegerRGB(247,205,93)) # This color should represent sunrise
 
         # Reset the alarm times days to the current or next day
         if kwargs.get('repeat'):
