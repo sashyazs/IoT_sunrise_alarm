@@ -5,33 +5,37 @@
 <h1>{{ title }}</h1>
 
 <div id="alarms">
-    <table>
+    <table id="alarmTable">
         <thead>
             <tr>
                 <th scope="col">Alarms</th>
                 <th scope="col">Status</th>
                 <th scope="col">Color</th>
+                <th scope="col" class="edit">&nbsp;</th>
             </tr>
         </thead>
         <tbody hx-target="closest tr" hx-swap="outerHTML swap:1s">
             {% for a in alarms %}
-            <tr>
+            <tr id="alarm{{ alarms.index(a) }}">
                 <td>
                     <p class="name">{{ a.name }}</p>
                     <p class="time">{{ a.time }}</p>
                     <p class="time_relative">{{ a.time_till_next_alarm() }}</p>
                 </td>
                 <td>
-                    <!-- Rounded switch -->
-                    <label class="switch">
-                        <input type="checkbox" {% if a.enabled==1 %}checked{% endif %}>
-                        <span class="slider round"></span>
-                    </label>
-                <td bgcolor="{{ a.color }}">
+                    <p>{% if a.enabled==1 %}Enabled{% endif %}</p>
+                    <p>{% if a.ringing==1 %}Ringing!{% endif %}</p>
+                <td>
+                    <!-- Workaround to change the backround color of the row now that direct style is not allowed -->
+                    <script>
+document.getElementById("alarm{{ alarms.index(a) }}").style.backgroundColor = "{{ a.color }}";
+                    </script>
+                </td>
+                <td>
                     <button class="btn btn-danger" hx-get="/alarm/{{ alarms.index(a) }}">
                         Edit
                     </button>
-                    <button class="btn btn-danger" hx-delete="/alarm/{{ alarms.index(a) }}/delete">
+                    <button class="btn btn-danger" hx-delete="/alarm/{{ alarms.index(a) }}">
                         Delete
                     </button>
                 </td>

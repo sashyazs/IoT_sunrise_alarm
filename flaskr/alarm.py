@@ -78,7 +78,7 @@ class Alarm:
         # self.time = datetime.strptime(kwargs.get('time'), '%Y-%m-%d %H:%M:%S')
         
         if kwargs.get('enabled'):
-            self.enabled = kwargs.get('enabled')
+            self.enabled = True
         else:
             self.enabled = False
 
@@ -160,30 +160,64 @@ def index():
 
 # Create an alarm
 @bp.route("/alarm", methods=['GET','POST'])
-def create():
+def alarm():
     global globAlarms
-    
-    return request.form['name'], 200
+    # Get alone will just bring up a form to create a new alarm
+    if request.method == 'GET':
+        return render_template('create.html')
+    # Update the data in the global array of alarms
+    if request.method == 'POST':
+        print(request.form)
+        # Parse the PUT values to local variables.
+        # Normally it would be advisable to character stripping and security checks.
+        name = str(request.form['name'])
+        time = request.form['time']
+        # This is bebause HTML forms don't send unchecked values back
+        if 'enabled' in request.form:
+            enabled = True
+        else:
+            enabled = False
+        color=request.form['color']
 
-# Read an alarm
-@bp.route("/alarm/<int:id>", methods=['GET'])
-def read(id):
-    global globAlarms
-    return render_template('update.html', id=id, a=globAlarms[id])
+        # Update the results in the array
+        globAlarms.append(Alarm(name=name, time=time, enabled=enabled, color=color))
+
+        # Remember to save the values back to the JSON file
+        alarms_save(globAlarms)
+    return 'Alarm added. Need to check how to get the return working.' , 200
 
 # Update an alarm
-@bp.route("/alarm/<int:id>", methods=['PUT'])
+@bp.route("/alarm/<int:id>", methods=['GET','PUT','DELETE'])
 def update(id):
+    # Keeping the alarms in a global variable
     global globAlarms
-    return '' , 200
 
-# Delete an alarm
-@bp.route("/alarm/<int:id>/delete", methods=['DELETE'])
-def detele(id):
-    global globAlarms
-    globAlarms.pop(id)
-    alarms_save(globAlarms)
-    return '' , 200
+    # Read Method
+    if request.method == 'GET':
+        return render_template('update.html', id=id, a=globAlarms[id])
+
+    # Update Method
+    if request.method == 'PUT':
+        print(request.form)
+        # Parse the PUT values to local variables.
+        # Normally it would be advisable to character stripping and security checks.
+        name = str(request.form['name'])
+        time = request.form['time']
+        # This is bebause HTML forms don't send unchecked values back
+        if 'enabled' in request.form:
+            enabled = True
+        else:
+            enabled = False
+        color=request.form['color']
+        # Update the results in the array
+        globAlarms[id] = (Alarm(name=name, time=time, enabled=enabled, color=color))
+        return '' , 200
+
+    # Delete Method
+    if request.method == 'DELETE':
+        globAlarms.pop(id)
+        alarms_save(globAlarms)
+        return '' , 200
 
 # End - CRUD Stuff goes here
 
@@ -211,6 +245,8 @@ def alarms_load(file = 'alarms.json'):
             # Could not load the alarms file, so populate the array with a default
             globAlarms = [
                 Alarm(name="Default Alarm", time='1900-01-01 08:00:00', enabled=True, repeat=True),
+                Alarm(name="Test1", time='1900-01-01 09:00:00', enabled=True, repeat=True),
+                Alarm(name="Test2", time='1900-01-01 10:00:00', enabled=True, repeat=True),
             ]
         else:
             # If the file was able to be read, load the alarms.

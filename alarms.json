@@ -1,1 +1,1 @@
-[{"name": "Default Alarm", "time": "2023-12-08 08:00:00", "enabled": true, "color": "#f7cd5d", "repeat": true}]
+[{"name": "Default Alarm", "time": "2023-12-08 08:00:00", "enabled": true, "color": "#748674"}, {"name": "Test2", "time": "2023-12-08 10:00:00", "enabled": true, "color": "#f7cd5d"}, {"name": "New3", "time": "2023-12-07 22:25:00", "enabled": true, "color": "#aa2222"}]
