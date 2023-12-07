@@ -6,38 +6,44 @@ from pathlib import Path
 import sys
 
 from flask import Blueprint
-from flask import render_template
+from flask import render_template, request, redirect
 
 from datetime import datetime
 import json
+import webcolors    # Need this to handle the HEX colors used by HTML
 
 bp = Blueprint("alarm", __name__)
+
+# Global list of alarms
+globAlarms = []
 
 # This is our local representation of color values.
 @dataclass
 class Color:
-    r: int  # Red 0 - 255
-    g: int  # Green 0 - 255
-    b: int  # Blue 0 - 255
+    
+    red: int  # Red 0 - 255
+    green: int  # Green 0 - 255
+    blue: int  # Blue 0 - 255
     a: float  # Opacity 0.0 - 1.0, but we will use it as a brighness value in our program
 
-    def __init__(self, r: int, g:int, b: int, a: int = 1):
-        self.r = r
-        self.g = g
-        self.b = b
-        self.a = a
+    def __init__(self, value):
+
+        self.red = value.red
+        self.green = value.green
+        self.blue = value.blue
+        self.a = 100
         self.__a = 0
 
     def __str__(self) -> str:
-        return f'#{self.r:2x}{self.g:2x}{self.b:2x}'
+        return webcolors.rgb_to_hex((self.red, self.green, self.blue))
 
     def __iter__(self):
         return self
     
     def __next__(self):
-        r = self.r
-        g = self.g
-        b = self.b
+        r = self.red
+        g = self.green
+        b = self.blue
 
         # Had to add this small fraction of 0.01 to make the values end at the final number. Too tired to do it better.
         if self.__a > self.a + 0.01:
@@ -46,21 +52,25 @@ class Color:
         g_dimmed: int = g * self.__a
         b_dimmed: int = b * self.__a
         self.__a += 0.5
-        return f'#{int(r_dimmed):02x}{int(g_dimmed):02x}{int(b_dimmed):02x}'
+        return webcolors.rgb_to_hex((int(r_dimmed),
+                                    int(g_dimmed),
+                                    int(b_dimmed),))
 
         
 
 # This will handle all the alarm details such as name, time and anything else to be added.
 class Alarm:
 
+    count: int = 0      # ID number of this alarm, will use the instance number for this
     name: str           # Sting name of the alarm
     time: datetime      # Datatime formatted string of the alarm time
-    enabled: bool        # Is the alarm currently enabled or not
+    enabled: bool       # Is the alarm currently enabled or not
     repeat: bool        # Does this alarm repeat. For now, it is only used to reset the day to the current day
     color: Color        # The color of the light when it is fully on
-    ringing: bool        # Is the alarm currently ringing
+    ringing: bool       # Is the alarm currently ringing
 
     def __init__(self, **kwargs):
+        Alarm.count += 1
         ini_time_for_now = datetime.now()
         self.name = kwargs.get('name')
         
@@ -73,7 +83,7 @@ class Alarm:
             self.enabled = False
 
         if kwargs.get('color'):
-            self.color = kwargs.get('color')    
+            self.color = Color(webcolors.hex_to_rgb(kwargs.get('color')))
         else:
             self.color = Color(247,205,93) # This color should represent sunrise
 
@@ -82,6 +92,9 @@ class Alarm:
             self.repeat = kwargs.get('repeat')
             self.time = self.time.replace(year=ini_time_for_now.year, month=ini_time_for_now.month, day=ini_time_for_now.day+1)
     
+    def __del__(self):
+        Alarm.count -= 1
+
     # Create a pretty string representation of the current alarms
     def __str__(self) -> str:
         return f'Alarm {self.name} set for {self.time.strftime('%H:%M')} and is currently {"on" if self.enabled else "off"}'
@@ -132,17 +145,52 @@ class Alarm:
 # Create and render the homepage
 @bp.route("/")
 def index():
-
-    alarms = alarms_load()
-
+    global globAlarms
+    
+    if not globAlarms:
+        alarms_load()
+    
+    alarms_save(globAlarms)
+    
     title = "Main Page"
-    return render_template('index.html', title=title, alarms=alarms)
+    return render_template('index.html', title=title, alarms=globAlarms)
 
-def alarms_save():
+# Start - CRUD Stuff goes here
+
+# Create an alarm
+@bp.route("/alarm", methods=['GET','POST'])
+def create():
+    global globAlarms
+    
+    return request.form['name'], 200
+
+# Read an alarm
+@bp.route("/alarm/<int:id>", methods=['GET'])
+def read(id):
+    global globAlarms
+    return render_template('update.html', id=id, a=globAlarms[id])
+
+# Update an alarm
+@bp.route("/alarm/<int:id>", methods=['PUT'])
+def update(id):
+    global globAlarms
+    return '' , 200
+
+# Delete an alarm
+@bp.route("/alarm/<int:id>/delete", methods=['DELETE'])
+def detele(id):
+    global globAlarms
+    globAlarms.pop(id)
+    alarms_save(globAlarms)
+    return '' , 200
+
+# End - CRUD Stuff goes here
+
+def alarms_save(alarms):
     jsonstr = []
     # the json file where the output must be stored 
     out_file = open("alarms.json", "w") 
-    for a in alarms:
+    for a in globAlarms:
         print(repr(a))
         jsonstr.append(a.__dict__)
     json.dump(jsonstr, out_file, default=str)
@@ -150,7 +198,7 @@ def alarms_save():
 
 def alarms_load(file = 'alarms.json'):
     alarm_file = Path(file)
-    alarm_list = []
+    global globAlarms
     
     # First check if we are dealing with a file
     if alarm_file.is_file:
@@ -160,26 +208,25 @@ def alarms_load(file = 'alarms.json'):
                 json_array = json.load(input_file)
         except FileNotFoundError:
             # Could not load the alarms file, so populate the array with a default
-            alarm_list = {
+            globAlarms = [
                 Alarm(name="Default Alarm", time='1900-01-01 08:00:00', enabled=True, repeat=True),
-                Alarm(name="Get Coffee", time='1900-01-01 08:15:00', color=Color(255,255,255)),
-                Alarm(name="More Coffee", time='1900-01-01 08:30:00', color=Color(111,78,55)),
-            }
+            ]
         else:
             # If the file was able to be read, load the alarms.
             for item in json_array:
-                alarm_list.append(Alarm(item['name'],item['time']))
-
-        return sorted(alarm_list)
+                globAlarms.append(Alarm(name=item['name'],
+                                        time=item['time'],
+                                        enabled=item['enabled'],
+                                        color=item['color'],))
         
 # This is for testing and working on this module in isolation
 if __name__ == "__main__":
-    alarms = alarms_load()
-    for a in alarms:
+    alarms_load()
+    for a in globAlarms:
         # print(str(a))
         print(a.time_till_next_alarm())
     
-    for a in alarms:
+    for a in globAlarms:
         c = a.color
         print(f"Printing colors for {a} with maximum of {a.color}")
         val = a.color

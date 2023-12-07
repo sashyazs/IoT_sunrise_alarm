@@ -1,0 +1,21 @@
+<tr>
+    <td>
+        <input type="text" class="name" name="{{ a.name }}" value="{{ a.name }}">
+        <input type="datetime-local" class="time" value="{{ a.time }}"">
+        <p class="time_relative">{{ a.time_till_next_alarm() }}</p>
+    </td>
+    <td>
+        <!-- Rounded switch -->
+        <label class="switch">
+            <input type="checkbox" {% if a.enabled==1 %}checked{% endif %}>
+            <span class="slider round"></span>
+        </label>
+    <td bgcolor="{{ a.color }}">
+        <button class="btn btn-danger" hx-get="/alarm/{{ id }}">
+            Cancel
+        </button>
+        <button class="btn btn-danger" hx-put="/alarm/{{ id }}">
+            Save
+        </button>
+    </td>
+</tr>

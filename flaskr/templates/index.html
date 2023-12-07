@@ -13,7 +13,7 @@
                 <th scope="col">Color</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody hx-target="closest tr" hx-swap="outerHTML swap:1s">
             {% for a in alarms %}
             <tr>
                 <td>
@@ -27,12 +27,29 @@
                         <input type="checkbox" {% if a.enabled==1 %}checked{% endif %}>
                         <span class="slider round"></span>
                     </label>
-                <td bgcolor="{{ a.color }}">&nbsp;</td>
-
+                <td bgcolor="{{ a.color }}">
+                    <button class="btn btn-danger" hx-get="/alarm/{{ alarms.index(a) }}">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger" hx-delete="/alarm/{{ alarms.index(a) }}/delete">
+                        Delete
+                    </button>
+                </td>
             </tr>
             {% endfor %}
+            <tr id="newAlarm"></tr>
         </tbody>
     </table>
+</div>
+<div>
+    <form hx-post="/alarm" hx-swap="beforebegin" hx-target="newAlarm">
+        <div>
+            <input type="text" name="crate" class="form-control">
+        </div>
+        <div>
+            <button class="btn">Add Alarm</button>
+        </div>
+    </form>
 </div>
 
 {% endblock %}

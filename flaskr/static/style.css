@@ -203,3 +203,10 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 } 
+
+/* -------------- HTMX from htmx.org ------------- */
+
+tr.htmx-swapping td {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
