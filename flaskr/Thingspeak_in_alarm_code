@@ -1,0 +1,6 @@
+
+if check_alarm_off():
+    print("Alarm turned off. Entering post-alarm mode.")
+    # Send an HTTP POST request to update ThingSpeak
+    update_thingspeak(current_time)
+    Break

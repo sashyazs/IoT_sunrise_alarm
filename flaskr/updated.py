@@ -72,47 +72,42 @@ def alarm_clock(wake_up_time, sunrise_duration):
             print("Alarm! Time to wake up!")
             sense.show_message("Alarm! Time to wake up!")
             sense.clear(255, 165, 0)
-            break
+            handle_joystick_after_alarm()  # Call the function after the alarm is turned off
+            Break
 
+            break
 
 def take_action_ultrasonic():
     time.sleep(1)
-    
-    global stop_button
+
     global stop_ultrasonic
-    
+
     while not stop_ultrasonic:
         ultrasonic_sensor.wait_for_in_range()
-        stop_button=True
+        stop_ultrasonic = True
         print("In range")
-        print(stop_button)
+        print(stop_ultrasonic)
+        sense.clear()  # Turn off the LED display
         ultrasonic_event.set()
-        button_event.wait()  # Wait for the button event to be set
-        ultrasonic_event.clear()  # Reset the event
-      
+        handle_joystick_after_alarm()  # Call the function after ultrasonic is sensed
+        break  # Exit the loop when ultrasonic is sensed
 
 def take_action_button():
     time.sleep(1)
-    
+
     global stop_button
-    global stop_ultrasonic
-    
+
     while not stop_button:
         button.wait_for_press()
-        stop_ultrasonic=True
+        stop_button = True
         print("Button is pressed")
-        print(stop_ultrasonic)
+        print(stop_button)
+        sense.clear()  # Turn off the LED display
         button_event.set()
-        button.wait_for_release()  # Wait for the button to be released before detecting another press
-        button_event.clear()  # Reset the event
-        ultrasonic_event.wait()  # Wait for the ultrasonic event to be set
-        button_event.clear()  # Reset the event
-    handle_joystick_after_alarm
-    
-        
+        handle_joystick_after_alarm()  # Call the function after the button is pressed
+        break  # Exit the loop when the button is pressed
 
-
-
+   
 # Example: Set alarm for 8:30 AM with a 1-minute sunrise simulation
 thread_one = threading.Thread(target=alarm_clock, args=("14:05", 1))
 thread_two = threading.Thread(target=take_action_ultrasonic)
