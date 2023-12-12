@@ -1,0 +1,11 @@
+api_key = 'I79AXL04SUBGYK0V'
+api_url = f'https://api.thingspeak.com/update?api_key={api_key}'
+
+def update_thingspeak(off_time):
+    # Replace 'YOUR_API_KEY' with your ThingSpeak API key
+    data = {'field1': off_time}
+    response = requests.post(api_url, data=data)
+    if response.status_code == 200:
+        print("Data updated successfully on ThingSpeak!")
+    else:
+        print(f"Error: Unable to update data. Status code: {response.status_code}")
