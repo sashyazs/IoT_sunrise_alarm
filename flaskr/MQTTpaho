@@ -23,10 +23,13 @@ def on_message_alarm(client, userdata, msg):
 
 def on_message_registration(client, userdata, msg):
     # Handle the received registration message, e.g., add email to the dictionary
+    # when a message is received on the "alarm/email_registration" topic. 
+    # It extracts the client ID from the topic and adds the corresponding email address to the recipient_emails dictionary.
     client_id = msg.topic.split("/")[-1]  # Extract client ID from the topic
     recipient_emails[client_id] = msg.payload.decode()
 
 # Email Function
+#This function sends an email using the provided SMTP settings. It takes a recipient email, subject, and body as parameters.
 def send_email(recipient, subject, body):
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
@@ -34,7 +37,8 @@ def send_email(recipient, subject, body):
         message = f"Subject: {subject}\n\n{body}"
         server.sendmail(sender_email, recipient, message)
 
-# MQTT Client Setup
+# MQTT client is set up and connected to the broker.
+# subscribes to the "alarm/turned_off" topic and sets the on_message_alarm callback for this topic.
 client = mqtt.Client()
 client.connect(mqtt_broker, 1883, 60)
 
