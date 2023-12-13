@@ -1,0 +1,104 @@
+from gpiozero import Button, DistanceSensor
+from sense_hat import SenseHat
+from datetime import datetime, timedelta
+import time
+from multiprocessing import Process
+from threading import Thread, Event
+import threading
+import http.client
+import urllib
+
+# Initialize Sense HAT
+sense = SenseHat()
+sense.clear()
+
+
+# ult_event = Event()
+# btn_event = Event()
+
+# Function to simulate sunrise gradually
+def simulate_sunrise(start_time, duration_minutes):
+    start_brightness = 0
+    end_brightness = 255
+    interval = duration_minutes / ((end_brightness - start_brightness) / 5)
+
+    for brightness in range(start_brightness, end_brightness + 1, 5):
+        sense.low_light = True  # Enable low light mode for a smoother transition
+        sense.clear([brightness, brightness, 0])
+        time.sleep(interval * 60)  # Convert interval to seconds
+        
+
+# Main function for the alarm clock
+def alarm_clock(wake_up_time, sunrise_duration):
+    wake_up_datetime = datetime.strptime(wake_up_time, "%H:%M")
+    start_time = wake_up_datetime - timedelta(minutes=sunrise_duration)
+
+    print(f"Alarm set for {wake_up_time}. Sunrise simulation starts at {start_time.strftime('%H:%M')}.")
+
+
+    
+    while True:
+        current_time = datetime.now().strftime("%H:%M")
+        if current_time == start_time.strftime("%H:%M"):
+            print("Sunrise simulation started.")
+            simulate_sunrise(start_time, sunrise_duration)
+            break
+
+    
+    while True:
+        current_time = datetime.now().strftime("%H:%M")
+        if current_time == wake_up_time:
+            print("Alarm! Time to wake up!")
+            #sense.show_message("Alarm! Time to wake up!")
+            sense.clear(255, 165, 0)
+            return
+        
+def update_ThingSpeak():
+    print(off_time)
+    key = "I79AXL04SUBGYK0V"  # Put your API Key here
+    params = urllib.parse.urlencode({'field1': off_time, 'key':key })
+    headers = {"Content-type": "application/x-www-form-urlencoded"}
+    conn = http.client.HTTPConnection("api.thingspeak.com:80")
+    conn.request("POST", "/update", params, headers)
+    response = conn.getresponse()
+    print(response.status, response.reason)
+    data = response.read()
+    print(data)
+    conn.close()
+
+def take_action_ultrasonic():
+    ultrasonic_sensor = DistanceSensor(echo=17, trigger=4, threshold_distance=0.3)
+    #print(f"Distance: {ultrasonic_sensor.distance} meters")
+    ultrasonic_sensor.wait_for_in_range()
+    #while distance > 0.1:
+        #do sth
+    print("In range")
+#     ult_event.set()
+    global off_time
+    off_time = datetime.now().strftime("%H:%M")
+    sense.clear()
+
+def take_action_button():
+    button = Button(19)
+    button.wait_for_press()
+    button.wait_for_release() 
+    print("Button is pressed")
+#     btn_event.set()
+    global off_time
+    off_time = datetime.now().strftime("%H:%M")
+    sense.clear()
+
+thread_alm = threading.Thread(target=alarm_clock, args=("18:16", 0.1))
+thread_btn = Thread(target=take_action_button)
+thread_ult = Thread(target=take_action_ultrasonic)
+thread_alm.start()
+thread_btn.start()
+thread_ult.start()
+thread_btn.join()
+thread_ult.join()
+thread_alm.join()
+#if btn_event.is_set(): print("btn")
+#if ult_event.is_set(): print("ult")
+update_ThingSpeak()
+sense.clear()
+
