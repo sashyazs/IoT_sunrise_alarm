@@ -9,4 +9,5 @@ dependencies = [
     "gpiozero",
     "sense-emu",
     "webcolors",
+    "paho-mqtt",
 ]
