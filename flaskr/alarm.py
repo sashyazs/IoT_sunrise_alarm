@@ -100,7 +100,7 @@ class Alarm:
     def __str__(self) -> str:
         return f'Alarm {self.name} set for {self.time.strftime('%H:%M')} and is currently {"on" if self.enabled else "off"}'
 
-    def __repr__(self)->str:
+    def __repr__(self)->str: # needed to save to JSON 
         return f'Alarm(\'{self.name}\',\'{self.time}\',{self.enabled})'
 
     def __hash__(self):
@@ -168,6 +168,7 @@ def alarm():
     # Update the data in the global array of alarms
     if request.method == 'POST':
         print(request.form)
+
         # Parse the PUT values to local variables.
         # Normally it would be advisable to character stripping and security checks.
         name = str(request.form['name'])
@@ -211,7 +212,9 @@ def update(id):
         color=request.form['color']
         # Update the results in the array
         globAlarms[id] = (Alarm(name=name, time=time, enabled=enabled, color=color))
-        return '' , 200
+        return '' , 200 # htmx requires a blank response with a code '200'
+        #htmx = javascript thingy for lines
+        # see it as 'hx' in the html files
 
     # Delete Method
     if request.method == 'DELETE':
@@ -245,9 +248,8 @@ def alarms_load(file = 'alarms.json'):
             # Could not load the alarms file, so populate the array with a default
             globAlarms = [
                 Alarm(name="Default Alarm", time='1900-01-01 08:00:00', enabled=True, repeat=True),
-                Alarm(name="Test1", time='1900-01-01 09:00:00', enabled=True, repeat=True),
-                Alarm(name="Test2", time='1900-01-01 10:00:00', enabled=True, repeat=True),
             ]
+            
         else:
             # If the file was able to be read, load the alarms.
             for item in json_array:
